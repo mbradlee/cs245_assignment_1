@@ -8,14 +8,26 @@ import java.io.*;
 public class externalSortClass {
 
     public static void main(String args[]) throws UnsupportedEncodingException {
-        File f = new File("inputTest.txt");
-        File o = new File("outputTest.txt");
 
-        externalSort(f, o, 20, 4);
+        externalSort("inputTest.txt", "outputTest.txt", 12, 5);
     }
 
-    public static void externalSort(File inputFile, File outputFile, int n, int k) throws UnsupportedEncodingException{
+    /**
+     * External sort creates files based on the number of chunks (ceil(n/k)) in order
+     * to store k data in each. These files are then sorted with the quadraticSort function.
+     * It then merges these into a sorted output file using a k-merge algorithm.
+     * @param input ->name of the input file
+     * @param output ->name of the output file
+     * @param n ->total number of data items
+     * @param k ->max number of available input
+     * @throws UnsupportedEncodingException
+     */
+
+    public static void externalSort(String input, String output, int n, int k) throws UnsupportedEncodingException{
         //n items, k max memory input
+
+        File inputFile = new File(input);
+        File outputFile = new File(output);
 
         int chunks = (int)Math.ceil((double)n/(double)k);
 
@@ -90,6 +102,13 @@ public class externalSortClass {
 
     }
 
+    /**
+     * this quadraticSort function is implemented as insertion sort
+     * @param a
+     * @param left
+     * @param right
+     */
+
     static void quadraticSort(double [] a, int left, int right){
 
         for(int i = left; i < right; i++) {
@@ -103,6 +122,17 @@ public class externalSortClass {
         }
 
     }
+
+    /**
+     * mergeSort reads the leading value of all tempFiles and writes them onto the output
+     * file using a k-merge sorting algorithm
+     * @param outputFile ->sorted output file
+     * @param n ->total number of elements
+     * @param k ->number of elements allowed to read in
+     * @param chunks ->ceil(n%k)
+     * @throws FileNotFoundException
+     * @throws UnsupportedEncodingException
+     */
 
     static void mergeSort(File outputFile, int n, int k, int chunks) throws FileNotFoundException, UnsupportedEncodingException {
 
@@ -133,7 +163,7 @@ public class externalSortClass {
                 Scanner s = new Scanner(f);
                 //check if entire file has been read
 
-                if(i == tempMin.length - 1){
+                if(i == tempMin.length - 1 && n%k != 0){
                     if (indices[i] >= n%k) {
                         tempMin[i] = -1; //yes? set temp min to be -1 at the index which the whole file has bee read
                         sortedChunks++;
@@ -156,6 +186,9 @@ public class externalSortClass {
 
             //find the min in tempMin to be written into output
             int min = findMin(tempMin);
+
+            System.out.println("Writing: " + tempMin[min]);
+
             //write min to output
             writer.println(tempMin[min]);
             //increment this index that was written by one
@@ -175,6 +208,13 @@ public class externalSortClass {
         writer.close();
 
     }
+
+    /**
+     * Find min takes in an array of doubles and finds the smallest number,
+     * as long as it is not -1, and returns the index of this number.
+     * @param a ->the given array of doubles
+     * @return min ->the index of the smallest double in the given array
+     */
 
     static int findMin(double [] a){
         int min = 0;

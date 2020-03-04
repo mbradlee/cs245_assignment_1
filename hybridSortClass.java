@@ -17,7 +17,7 @@ public class hybridSortClass {
 //            counter++;
 //        }
 
-        double dataArray[] = new double[1000000];
+        double dataArray[] = new double[50];
         double num;
 
         for(int i = 0; i < dataArray.length; i++){
@@ -108,17 +108,13 @@ public class hybridSortClass {
             a[j+1] = value;
         }
 
-        System.out.println("Finished quadratic sort");
-
     }
 
     public static void hybridSort(double [] a , int left, int right){
         int subSize = 1000;
         if(right - left <= subSize){
-            System.out.println("quadratic sorting...");
             quadraticSort(a, left, right);
         }else{
-            System.out.println("quick sorting...");
             int pivot = quickSort(a, left, right);
             hybridSort(a, left, pivot - 1);
             hybridSort(a, pivot + 1, right);
